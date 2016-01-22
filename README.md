@@ -15,5 +15,11 @@ bundle install # if you're going to run the ruby script
 Download all .csv files to local file system.
 
 ```` sh
-ruby download.rb
+ruby extract.rb
+````
+
+Store .csv data in a database.
+
+```` sh
+ruby transform_and_load.rb
 ````

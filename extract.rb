@@ -1,4 +1,4 @@
-# to run from root directory: `ruby download.rb`
+# to run from root directory: `ruby extract.rb`
 
 require 'active_support/all'
 require 'httparty'
