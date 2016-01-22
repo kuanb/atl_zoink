@@ -64,7 +64,7 @@ for single_date in daterange(start_date, end_date):
 		hasdata.write("\n")
 		hasdata.close()
 
-		print "Got a hit on " + curr_date + "and kept " + len(keep) + " out of " + len(lines) + " results."
+		print "Got a hit on " + curr_date + "and kept " + str(len(keep)) + " out of " + str(len(lines)) + " results."
 
 	except urllib2.HTTPError, e:
 		empty = open("empty.csv","a")
