@@ -18,7 +18,7 @@ end
 
 # @param [Date] day
 def csv_file_path(day)
-  file_name = day.strftime("%Y-%m-%d")
+  file_name = "#{day.strftime("%Y-%m-%d")}.csv"
   File.join("data", file_name)
 end
 
