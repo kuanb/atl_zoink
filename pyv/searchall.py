@@ -1,26 +1,45 @@
 from datetime import timedelta, date
 import urllib2
+
 import csv
 csv.field_size_limit(1000000000)
 
-url_base = "http://courtview.atlantaga.gov/courtcalendars/court_online_calendar/codeamerica."
+import sqlite3 as lite
+import sys
+con = None
 
+
+# housekeeping to get the db set up and clean
+con = lite.connect("all.db")
+with con:
+	cur = con.cursor()
+	cur.execute("DROP TABLE IF EXISTS allatl")
+	cur.execute("CREATE TABLE allatl(case_date TEXT, case_defendant TEXT, citation_location TEXT, case_room TEXT, case_time TEXT, citation_id TEXT, citation_violation_id TEXT, citation_violation_description TEXT, citation_payable TEXT)")
+except lite.Error, e:
+	print "Error %s:" % e.args[0]
+	sys.exit(1)
+finally:
+	if con:
+		con.close()
+	con = None
+
+
+# base information/parameters for running operation
+url_base = "http://courtview.atlantaga.gov/courtcalendars/court_online_calendar/codeamerica."
+start_date = date(2014, 1, 1)
+end_date = date(2016, 1, 1)
+
+
+# func utils
 def daterange(start_date, end_date):
 	for n in range(int ((end_date - start_date).days)):
 		yield start_date + timedelta(n)
-
-start_date = date(2014, 1, 1)
-end_date = date(2016, 1, 1)
 
 
 # open csvs then clean and prep to write to them as we get results
 f = open("empty.csv", "w+")
 f.close()
-
 f = open("hasdata.csv", "w+")
-f.close()
-
-f = open("alldata.csv", "w+")
 f.close()
 
 
@@ -35,27 +54,21 @@ for single_date in daterange(start_date, end_date):
 
 		lines = []
 		for r in reader:
-			entry = ",".join(r)
-			lines.append(entry)
+			lines.append(tuple(r))
+		l = tuple(lines)
 
-		keep = []
-		checker = open("alldata.csv")
-		base = csv.reader(checker, delimiter=",")
-		for l in lines:
-			do_keep = True
-			for b in base:
-				compare = ",".join(b)
-				if compare == l:
-					do_keep = False
-			if do_keep is True:
-				keep.append(l)
-		checker.close()
-
-		alldata = open("alldata.csv","a")
-		for k in keep:
-			alldata.write(k)
-			alldata.write("\n")
-		alldata.close()
+		con = lite.connect("all.db")
+		with con:
+			cur = con.cursor()
+			cur.execute("DROP TABLE IF EXISTS allatl")
+			cur.executemany("INSERT INTO allatl VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", l)
+		except lite.Error, e:
+			print "Error %s:" % e.args[0]
+			sys.exit(1)
+		finally:
+			if con:
+				con.close()
+			con = None
 
 		hasdata = open("hasdata.csv","a")
 		hasdata.write(curr_date)
