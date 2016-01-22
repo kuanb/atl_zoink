@@ -3,18 +3,44 @@
 require 'active_support/all'
 require 'httparty'
 require 'pp'
+require 'pry'
 
-# @param [String] date_string Needs to be in DDMMYYY format.
-def url(date_string)
-  "http://courtview.atlantaga.gov/courtcalendars/court_online_calendar/codeamerica.#{date_string}.csv"
+# The range of possible days on which .csv files could be posted to the server.
+def days
+  ("2014-01-01".to_date .. Date.today)
 end
 
-# Loop through all dates starting on 1/1/2015 to check for existance of data
+# @param [Date] day
+def csv_url(day)
+  url_date = day.strftime("%d%m%Y")
+  "http://courtview.atlantaga.gov/courtcalendars/court_online_calendar/codeamerica.#{url_date}.csv"
+end
 
-dates = ("2014-01-01".to_date .. Date.today)
-date_strings = dates.map{ |d| d.strftime("%d%m%Y") }
-date_strings.each do |ds|
-  puts ds
-  response = HTTParty.get(url(ds))
-  pp response.code
+# @param [Date] day
+def csv_file_path(day)
+  file_name = day.strftime("%Y-%m-%d")
+  File.join("data", file_name)
+end
+
+def csv_headers
+  ["case_date","case_defendant","citation_location","case_room","case_time",
+    "citation_id","citation_violation_id","citation_violation_description","citation_payable"]
+end
+
+days.each do |d|
+  response = HTTParty.get(csv_url(d))
+  puts "#{d} - #{response.code}"
+  next if response.code == 404
+
+  rows = CSV.parse(response.body, {:col_sep => "|"}) # ["07-MAY-14", "FORRESTER, KIM", "17TH & INMAN", "6A", "08:00:00 AM", "4678114", "40-6-72", "FAIL TO STOP AT STOP LINE", "1"]
+
+  CSV.open(csv_file_path(d), "w", :write_headers=> true, :headers => csv_headers) do |csv|
+    rows.each do |row|
+      begin
+        csv << row
+      rescue
+        binding.pry
+      end
+    end
+  end
 end

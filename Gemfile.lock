@@ -7,13 +7,20 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    coderay (1.1.0)
     httparty (0.13.7)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     i18n (0.7.0)
     json (1.8.3)
+    method_source (0.8.2)
     minitest (5.8.4)
     multi_xml (0.5.5)
+    pry (0.10.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    slop (3.6.0)
     thread_safe (0.3.5)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
@@ -24,6 +31,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   httparty
+  pry
 
 BUNDLED WITH
    1.11.2
