@@ -1,7 +1,15 @@
 # to run from root directory: `ruby transform_and_load.rb`
 
-# loop through each .csv file in the /data directory
+require 'csv'
+require 'pry'
 
-# for each file: loop through each row
+file_names = Dir.entries(File.join("data"))
+file_names.select!{|file_name| file_name.include?(".csv")} #file_names.reject!{|file_name| [".","..",".gitignore"].include?(file_name)}
+file_names.each do |file_name|
+  file_path = File.join(Dir.pwd, "data", file_name)
+  pp file_path
 
-# for each row: transform any values as necessary, then store the results in a database
+  CSV.foreach(file_path) do |row|
+    pp row
+  end
+end
