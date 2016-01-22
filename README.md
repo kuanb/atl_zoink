@@ -10,7 +10,7 @@ cd atl_zoink
 bundle install
 ````
 
-## Usage
+### Running in Ruby
 
 Download all .csv files to local file system.
 
