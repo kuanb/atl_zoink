@@ -1,6 +1,7 @@
 from datetime import timedelta, date
 import urllib2
 import csv
+csv.field_size_limit(1000000000)
 
 url_base = "http://courtview.atlantaga.gov/courtcalendars/court_online_calendar/codeamerica."
 
@@ -15,13 +16,13 @@ end_date = date(2016, 10, 5)
 
 
 # open csvs then clean and prep to write to them as we get results
-f = open('empty.csv', "w+")
+f = open("empty.csv", "w+")
 f.close()
 
-f = open('hasdata.csv', "w+")
+f = open("hasdata.csv", "w+")
 f.close()
 
-f = open('alldata.csv', "w+")
+f = open("alldata.csv", "w+")
 f.close()
 
 
@@ -32,25 +33,41 @@ for single_date in daterange(start_date, end_date):
 
 	try:
 		response = urllib2.urlopen(new_url)
-		html = response.read()
-		reader = csv.reader(html)
+		reader = csv.reader(response, delimiter="|")
 
-		# alldata = csv.reader(open('alldata.csv'),  delimiter=',')
+		lines = []
 		for r in reader:
-			alldata = open('alldata.csv','a')
-			alldata.write(curr_date)
-			alldata.write("\n")
-			alldata.close()
+			entry = ",".join(r)
+			lines.append(entry)
 
-		hasdata = open('hasdata.csv','a')
+		keep = []
+		checker = open("alldata.csv")
+		base = csv.reader(checker, delimiter=",")
+		for l in lines:
+			do_keep = True
+			for b in base:
+				compare = ",".join(b)
+				if compare == l:
+					do_keep = False
+			if do_keep is True:
+				keep.append(l)
+		checker.close()
+
+		alldata = open("alldata.csv","a")
+		for k in keep:
+			alldata.write(k)
+			alldata.write("\n")
+		alldata.close()
+
+		hasdata = open("hasdata.csv","a")
 		hasdata.write(curr_date)
 		hasdata.write("\n")
 		hasdata.close()
 
-		print "Got a hit on " + curr_date
+		print "Got a hit on " + curr_date + "and kept " + len(keep) + " out of " + len(lines) + " results."
 
 	except urllib2.HTTPError, e:
-		empty = open('empty.csv','a')
+		empty = open("empty.csv","a")
 		empty.write(curr_date)
 		empty.write("\n")
 		empty.close()
@@ -59,7 +76,7 @@ for single_date in daterange(start_date, end_date):
 
 
 
-# we're done so let's close up shop
+# we"re done so let"s close up shop
 empty.close()
 hasdata.close()
 print "Done."
