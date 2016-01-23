@@ -35,8 +35,9 @@ psql -U courtbot --password -d postgres -f $(pwd)/db/create.sql
 Migrate database.
 
 ```` sh
-ruby db/migrate/create_court_cases.rb
-ruby db/migrate/create_court_citations.rb
+ruby db/migrate/create_appointments.rb
+ruby db/migrate/create_citations.rb
+ruby db/migrate/create_violations.rb
 ````
 
 ## Usage
