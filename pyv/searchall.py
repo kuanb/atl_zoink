@@ -11,7 +11,7 @@ con = None
 
 # housekeeping to get the db set up and clean
 con = lite.connect("all.db")
-with con:
+try:
 	cur = con.cursor()
 	cur.execute("DROP TABLE IF EXISTS allatl")
 	cur.execute("CREATE TABLE allatl(case_date TEXT, case_defendant TEXT, citation_location TEXT, case_room TEXT, case_time TEXT, citation_id TEXT, citation_violation_id TEXT, citation_violation_description TEXT, citation_payable TEXT)")
@@ -26,7 +26,7 @@ finally:
 
 # base information/parameters for running operation
 url_base = "http://courtview.atlantaga.gov/courtcalendars/court_online_calendar/codeamerica."
-start_date = date(2014, 1, 1)
+start_date = date(2014, 4, 25)
 end_date = date(2016, 1, 1)
 
 
@@ -56,26 +56,18 @@ for single_date in daterange(start_date, end_date):
 		for r in reader:
 			lines.append(tuple(r))
 		l = tuple(lines)
-
 		con = lite.connect("all.db")
 		with con:
 			cur = con.cursor()
-			cur.execute("DROP TABLE IF EXISTS allatl")
 			cur.executemany("INSERT INTO allatl VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", l)
-		except lite.Error, e:
-			print "Error %s:" % e.args[0]
-			sys.exit(1)
-		finally:
-			if con:
-				con.close()
-			con = None
+		con = None
 
 		hasdata = open("hasdata.csv","a")
 		hasdata.write(curr_date)
 		hasdata.write("\n")
 		hasdata.close()
 
-		print "Got a hit on " + curr_date + " and kept " + str(len(keep)) + " out of " + str(len(lines)) + " results."
+		print "Got a hit on " + curr_date 
 
 	except urllib2.HTTPError, e:
 		empty = open("empty.csv","a")
