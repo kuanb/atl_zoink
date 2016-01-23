@@ -19,7 +19,7 @@ end
 # @param [Date] day
 def csv_file_path(day)
   file_name = "#{day.strftime("%Y-%m-%d")}.csv"
-  File.join("data", file_name)
+  File.join(File.expand_path(".."), "data") #File.join(Dir.pwd, "data", file_name) #File.join("data", file_name)
 end
 
 def csv_headers
