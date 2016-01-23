@@ -12,11 +12,14 @@ ActiveRecord::Base.establish_connection(
 ) #todo: read from common config
 
 class Appointment < ActiveRecord::Base
+  #belongs_to :citation, :reverse_of => :appointments
 end
 
 class Citation < ActiveRecord::Base
+  #belongs_to :violation, :reverse_of => :citations
+  #has_many :appointments, :reverse_of => :citation
 end
 
 class Violation < ActiveRecord::Base
-  self.primary_key = :guid
+  #has_many :citations, :reverse_of => :violation
 end

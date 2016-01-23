@@ -2,13 +2,13 @@ require_relative "../../app/models.rb"
 
 class CreateViolations < ActiveRecord::Migration
   def change
-    create_table :violations, :id => false do |t|
-      t.string :guid, :null => false
+    create_table :violations do |t|
+      t.string :guid
       t.string :description
       t.timestamps
     end
 
-    add_index :violations, :guid, :unique => true
+    add_index :violations, :guid
   end
 end
 

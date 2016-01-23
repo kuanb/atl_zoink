@@ -5,7 +5,6 @@ class CreateCitations < ActiveRecord::Migration
     create_table :citations do |t|
       t.string :guid
       t.string :violation_id
-      t.string :violation_description #todo: deprecate and move into :violations table
       t.string :location
       t.boolean :payable
 

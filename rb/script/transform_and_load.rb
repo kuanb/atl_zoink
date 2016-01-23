@@ -16,24 +16,25 @@ file_names.each do |file_name|
   CSV.foreach(file_path).each_with_index do |row, i|
     next if i == 0 # skip header row
 
+    violation = Violation.where({
+      :guid => row[6], # "123456789",
+      :description => row[7], # "A FAKE VIOLATION"
+    }).first_or_create!
+
+    citation = Citation.where({
+      :guid => row[5], # "123456789",
+      :violation_id => violation.id,
+      :location => row[2], # "123 FAKE STREET",
+      :payable => row[8], # 1
+    }).first_or_create!
+
     Appointment.where({
+      :citation_id => citation.id,
       :defendant_full_name => row[1], # "Fake Person",
       :room => row[3], # "3B",
       :date => row[0], # "20-JAN-15",
       :time => row[4], # "03:00:00 PM"
     }).first_or_create!
 
-    Citation.where({
-      :guid => row[5], # "123456789",
-      :violation_id => row[6], # "123456789",
-      :violation_description => row[7], # "123456789",
-      :location => row[2], # "123 FAKE STREET",
-      :payable => row[8], # 1
-    }).first_or_create!
-
-    Violation.where({
-      :guid => row[6], # "123456789",
-      :description => row[7], # "A FAKE VIOLATION"
-    }).first_or_create!
   end
 end
