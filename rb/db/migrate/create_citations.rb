@@ -4,7 +4,7 @@ class CreateCitations < ActiveRecord::Migration
   def change
     create_table :citations do |t|
       t.string :guid
-      t.string :violation_id
+      t.integer :violation_id
       t.string :location
       t.boolean :payable
 
