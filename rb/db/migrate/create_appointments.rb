@@ -11,15 +11,16 @@ ActiveRecord::Base.establish_connection(
   pool: 5
 ) #todo: read from common config
 
-class CreateCourtCases < ActiveRecord::Migration
+class CreateAppointments < ActiveRecord::Migration
   def change
-    create_table :court_cases do |t|
-      t.string :name
-      t.text :description
-
-      t.timestamps, :null => false
+    create_table :appointments do |t|
+      t.string :defendant_full_name
+      t.string :room
+      t.string :date
+      t.string :time
+      t.timestamps
     end
   end
 end
 
-CreateCourtCases.migrate(:up)
+CreateAppointments.migrate(:up)
