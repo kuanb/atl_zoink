@@ -51,11 +51,11 @@ ruby db/seed.rb
 Download all .csv files to local file system.
 
 ```` sh
-ruby lib/extract.rb
+ruby script/extract.rb
 ````
 
 Store .csv data in a database.
 
 ```` sh
-ruby lib/transform_and_load.rb
+ruby script/transform_and_load.rb
 ````

@@ -12,3 +12,5 @@
   + http://data-creative.info/process-documentation/2015/07/18/how-to-set-up-a-mac-development-environment.html#postgresql
   + http://stackoverflow.com/questions/17622106/variable-interpolation-in-shell
   + http://dfriedm.github.io/blog/2013/08/03/connecting-a-ruby-app-to-active-record-without-rails/
+  + http://stackoverflow.com/a/12407859/670433
+  + http://stackoverflow.com/questions/4662438/count-the-length-number-of-lines-of-a-csv-file
