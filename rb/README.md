@@ -40,6 +40,12 @@ ruby db/migrate/create_citations.rb
 ruby db/migrate/create_violations.rb
 ````
 
+Optionally seed the database with fixtures.
+
+```` sh
+ruby db/seed.rb
+````
+
 ## Usage
 
 Download all .csv files to local file system.

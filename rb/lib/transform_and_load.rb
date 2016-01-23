@@ -1,8 +1,7 @@
-# to run from root directory: `ruby transform_and_load.rb`
-
 require 'csv'
 require 'pry'
-require 'activerecord'
+require 'active_record'
+require 'pg'
 
 #
 # LIBRARY
@@ -18,13 +17,15 @@ ActiveRecord::Base.establish_connection(
   pool: 5
 ) #todo: read from common config
 
-class CourtCase << ActiveRecord::Base
+class Appointment < ActiveRecord::Base
 end
 
-class CourtCitation << ActiveRecord::Base
+class Citation < ActiveRecord::Base
 end
 
-CourtCitation.all.count
+class Violation < ActiveRecord::Base
+  self.primary_key = :guid
+end
 
 =begin
 #
