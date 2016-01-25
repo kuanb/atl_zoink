@@ -14,3 +14,4 @@
   + http://dfriedm.github.io/blog/2013/08/03/connecting-a-ruby-app-to-active-record-without-rails/
   + http://stackoverflow.com/a/12407859/670433
   + http://stackoverflow.com/questions/4662438/count-the-length-number-of-lines-of-a-csv-file
+  + http://stackoverflow.com/questions/21288458/in-redshift-postgres-how-to-count-rows-that-meet-a-condition

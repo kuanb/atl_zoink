@@ -7,7 +7,8 @@ require_relative "../app/models.rb"
 #
 
 AtlantaDataFile.local_file_names.each do |file_name|
-  AtlantaDataFile.where(:file_name => file_name).first_or_create!
+  f = AtlantaDataFile.where(:file_name => file_name).first_or_create!
+  f.update!(:row_count => `wc -l #{f.file_path}`.to_i) if f.row_count.nil?
 end
 
 #
@@ -24,7 +25,6 @@ puts process.inspect
 #
 
 data_files.each_with_index do |f, i|
-  f.update!(:row_count => `wc -l #{f.file_path}`.to_i)
   puts f.inspect
 
   parse_process = FileParseProcess.new(f)
