@@ -28,7 +28,7 @@ if os.environ.get("refresh") == "1":
 
 # base information/parameters for running operation
 url_base = "http://courtview.atlantaga.gov/courtcalendars/court_online_calendar/codeamerica."
-start_date = date(2015, 7, 12)
+start_date = date(2014, 1, 1)
 end_date = date(2016, 1, 1)
 
 
