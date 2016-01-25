@@ -6,6 +6,7 @@ csv.field_size_limit(1000000000)
 
 import sqlite3 as lite
 import sys
+import os
 con = None
 
 
