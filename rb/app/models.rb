@@ -54,17 +54,19 @@ class AtlantaDataFile
   end
 end
 
-class TransformLoadProcess
+class ObservedProcess
   attr_accessor :ended_at
 
+  def duration_seconds
+    (@ended_at - @started_at) unless @ended_at.nil?
+  end
+end
+
+class TransformLoadProcess < ObservedProcess
   def initialize(data_files)
     @file_count = data_files.count
     @started_at = Time.now
     @ended_at = nil
-  end
-
-  def duration_seconds
-    (@ended_at - @started_at) unless @ended_at.nil?
   end
 
   def duration_minutes
@@ -85,17 +87,11 @@ class TransformLoadProcess
   end
 end
 
-class FileParseProcess
-  attr_accessor :ended_at
-
+class FileParseProcess < ObservedProcess
   def initialize(atl_data_file)
     @file = atl_data_file
     @started_at = Time.now
     @ended_at = nil
-  end
-
-  def duration_seconds
-    (@ended_at - @started_at) unless @ended_at.nil?
   end
 
   def rows_per_second
