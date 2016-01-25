@@ -38,6 +38,7 @@ Migrate database.
 ruby db/migrate/create_appointments.rb
 ruby db/migrate/create_citations.rb
 ruby db/migrate/create_violations.rb
+ruby db/migrate/create_atlanta_data_files.rb
 ````
 
 Optionally seed the database with fixtures.

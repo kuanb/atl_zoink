@@ -24,35 +24,29 @@ class Violation < ActiveRecord::Base
   #has_many :citations, :reverse_of => :violation
 end
 
-class AtlantaDataFile
+class AtlantaDataFile < ActiveRecord::Base
   DATA_DIR = File.join(File.expand_path(".."), "data")
 
-  def self.file_names
+  def self.local_file_names
     Dir.entries(DATA_DIR).select!{|file_name| file_name.include?(".csv")}
   end
 
-  def self.all
-    file_names.map do |file_name|
-      AtlantaDataFile.new(file_name)
-    end
+  def self.parsed
+    where(:parsed => true)
   end
 
-  def initialize(file_name)
-    @file_name = file_name
+  def self.unparsed
+    all - parsed
   end
 
   def file_path
-    File.join(DATA_DIR, @file_name)
-  end
-
-  def row_count
-    `wc -l #{file_path}`.to_i
-  end
-
-  def inspect
-    "#{self.class} -- #{file_path} -- #{row_count} rows"
+    File.join(DATA_DIR, file_name)
   end
 end
+
+#
+# Processes
+#
 
 class ObservedProcess
   attr_accessor :ended_at
@@ -80,10 +74,10 @@ class TransformLoadProcess < ObservedProcess
   def inspect
     case @ended_at
     when nil
-      "Processing #{@file_count} files ..."
+      "Processing #{@file_count} of #{AtlantaDataFile.local_file_names.count} files ..."
     else
-      "Processed #{@file_count} files in #{duration_minutes} minutes (#{files_per_minute} fpm)"
-    end
+      "Processed #{@file_count} of #{AtlantaDataFile.local_file_names.count} files in #{duration_minutes} minutes (#{files_per_minute} fpm)"
+    end #todo: avoid reaching into AtlantaDataFile
   end
 end
 

@@ -2,12 +2,29 @@ require 'csv'
 require 'pry'
 require_relative "../app/models.rb"
 
-data_files = AtlantaDataFile.all
+#
+# Scan for new/unpersisted files and persist their metadata.
+#
+
+AtlantaDataFile.local_file_names.each do |file_name|
+  AtlantaDataFile.where(:file_name => file_name).first_or_create!
+end
+
+#
+# Identify file(s) which have not yet been parsed.
+#
+
+data_files = AtlantaDataFile.unparsed
 
 process = TransformLoadProcess.new(data_files)
 puts process.inspect
 
+#
+# Parse file(s).
+#
+
 data_files.each_with_index do |f, i|
+  f.update!(:row_count => `wc -l #{f.file_path}`.to_i)
   puts f.inspect
 
   parse_process = FileParseProcess.new(f)
@@ -35,6 +52,8 @@ data_files.each_with_index do |f, i|
       :time => row[4], # "03:00:00 PM"
     }).first_or_create!
   end
+
+  f.update!(:parsed => true)
 
   parse_process.ended_at = Time.now
   puts parse_process.inspect
