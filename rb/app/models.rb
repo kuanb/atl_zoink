@@ -9,7 +9,7 @@ ActiveRecord::Base.establish_connection(
   database: 'courtbot_atl',
   encoding: 'unicode',
   pool: 5
-) #todo: read from common config
+) #todo: read from environment-specific config file and set password environment variable in production (standard rails config)
 
 class Appointment < ActiveRecord::Base
   #belongs_to :citation, :reverse_of => :appointments
@@ -95,6 +95,7 @@ class FileParseProcess < ObservedProcess
   def inspect
     case @ended_at
     when nil
+      "Processing #{@file.row_count} rows ..."
     else
       "Processed #{@file.row_count} rows in #{duration_seconds} seconds (#{rows_per_second} rps)"
     end
