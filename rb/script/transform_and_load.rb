@@ -2,18 +2,17 @@ require 'csv'
 require 'pry'
 require_relative "../app/models.rb"
 
-def data_dir
-  File.join(File.expand_path(".."), "data")
-end
+data_files = AtlantaDataFile.all
 
-file_names = Dir.entries(data_dir)
-file_names.select!{|file_name| file_name.include?(".csv")} #file_names.reject!{|file_name| [".","..",".gitignore"].include?(file_name)}
-file_names.each do |file_name|
-  file_path = File.join(data_dir, file_name)
-  row_count = `wc -l #{file_path}`.to_i
-  puts "#{file_path} -- #{row_count}"
+process = TransformLoadProcess.new(data_files)
+puts process.inspect
 
-  CSV.foreach(file_path).each_with_index do |row, i|
+data_files.each_with_index do |f, i|
+  puts f.inspect
+
+  parse_process = FileParseProcess.new(f)
+
+  CSV.foreach(f.file_path).each_with_index do |row, i|
     next if i == 0 # skip header row
 
     violation = Violation.where({
@@ -35,6 +34,11 @@ file_names.each do |file_name|
       :date => row[0], # "20-JAN-15",
       :time => row[4], # "03:00:00 PM"
     }).first_or_create!
-
   end
+
+  parse_process.ended_at = Time.now
+  puts parse_process.inspect
 end
+
+process.ended_at = Time.now
+puts process.inspect
