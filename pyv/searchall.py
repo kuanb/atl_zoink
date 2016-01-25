@@ -59,7 +59,7 @@ for single_date in daterange(start_date, end_date):
 			if len(r) is 9:
 				lines.append(tuple(r))
 			else:
-				print "Bad length on line in " + curr_date + ". Row looks like: " + r
+				print "Bad length on line in " + str(curr_date) + ". Row looks like: " + str(r)
 
 		if len(lines) > 0:
 			l = tuple(lines)
