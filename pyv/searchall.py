@@ -10,23 +10,24 @@ con = None
 
 
 # housekeeping to get the db set up and clean
-con = lite.connect("all.db")
-try:
-	cur = con.cursor()
-	cur.execute("DROP TABLE IF EXISTS allatl")
-	cur.execute("CREATE TABLE allatl(case_date TEXT, case_defendant TEXT, citation_location TEXT, case_room TEXT, case_time TEXT, citation_id TEXT, citation_violation_id TEXT, citation_violation_description TEXT, citation_payable TEXT)")
-except lite.Error, e:
-	print "Error %s:" % e.args[0]
-	sys.exit(1)
-finally:
-	if con:
-		con.close()
-	con = None
+if os.environ.get("refresh") == "1":
+	con = lite.connect("all.db")
+	try:
+		cur = con.cursor()
+		cur.execute("DROP TABLE IF EXISTS allatl")
+		cur.execute("CREATE TABLE allatl(case_date TEXT, case_defendant TEXT, citation_location TEXT, case_room TEXT, case_time TEXT, citation_id TEXT, citation_violation_id TEXT, citation_violation_description TEXT, citation_payable TEXT)")
+	except lite.Error, e:
+		print "Error %s:" % e.args[0]
+		sys.exit(1)
+	finally:
+		if con:
+			con.close()
+		con = None
 
 
 # base information/parameters for running operation
 url_base = "http://courtview.atlantaga.gov/courtcalendars/court_online_calendar/codeamerica."
-start_date = date(2014, 4, 25)
+start_date = date(2015, 7, 12)
 end_date = date(2016, 1, 1)
 
 
@@ -54,13 +55,21 @@ for single_date in daterange(start_date, end_date):
 
 		lines = []
 		for r in reader:
-			lines.append(tuple(r))
-		l = tuple(lines)
-		con = lite.connect("all.db")
-		with con:
-			cur = con.cursor()
-			cur.executemany("INSERT INTO allatl VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", l)
-		con = None
+			if len(r) is 9:
+				lines.append(tuple(r))
+			else:
+				print "Bad length on line in " + curr_date + ". Row looks like: " + r
+
+		if len(lines) > 0:
+			l = tuple(lines)
+			con = lite.connect("all.db")
+			with con:
+				cur = con.cursor()
+				try:
+					cur.executemany("INSERT INTO allatl VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", l)
+				except e:
+					print "ERROR putting " + curr_date + " into local db"
+			con = None
 
 		hasdata = open("hasdata.csv","a")
 		hasdata.write(curr_date)
