@@ -7,10 +7,6 @@
 	app.use(express.static(__dirname + './static'));
 	app.use(express.static(__dirname + './bower_components'));
 
-	// favicon
-	var favicon = require('serve-favicon');
-	app.use(favicon(__dirname + '/static/favicon.ico'));
-
 	var port = process.env.PORT || 8080; 
 
 
@@ -19,17 +15,15 @@
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
 
-	// bcrypt setup
-	var uuid = require('node-uuid');
-
-	var emailUser = require('./utils/emailError.js').emailUser;
-	var emailUserPW = function (text, send_to, cb) {
-		emailUser(credentials, text, send_to, cb);
-	};
-
-	// attach to MySQL db and start server
+	// attach to sqlite3 db and start server
 	var fs = require("fs");
-	var credentials, mysql, pool, sqlite3, usersDB;
+
+	var knex = require('knex')({client: 'sqlite3', connection: {filename: "./all.db"}});
+
+
+	sqlite3 = require('sqlite3').verbose();
+	usersDB = new sqlite3.Database('database/users.db');
+
 	fs.readFile("credentials.json", "utf8", function (err, data) {
 		if (err) throw err;
 		credentials = JSON.parse(data);

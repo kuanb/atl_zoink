@@ -71,7 +71,7 @@ for single_date in daterange(start_date, end_date):
 				cur = con.cursor()
 				try:
 					cur.executemany("INSERT INTO allatl VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", l)
-				except e:
+				except:
 					print "ERROR putting " + curr_date + " into local db"
 			con = None
 
