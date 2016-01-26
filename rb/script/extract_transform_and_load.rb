@@ -12,16 +12,12 @@ require_relative "../app/models.rb"
 end
 
 #
-# Identify urls which have not yet been extracted.
+# Extract, transform, and load .csv data.
 #
 
 data_urls = DataUrl.unextracted
 process = ExtractionProcess.new(data_urls)
 puts process.inspect
-
-#
-# Extract, transform, and load .csv data.
-#
 
 data_urls.each do |du|
   response = HTTParty.get(du.url)
@@ -30,12 +26,11 @@ data_urls.each do |du|
 
   next unless du.response_code == 200
 
-  rows = CSV.parse(response.body, du.csv_parse_options) # ["07-MAY-14", "FORRESTER, KIM", "17TH & INMAN", "6A", "08:00:00 AM", "4678114", "40-6-72", "FAIL TO STOP AT STOP LINE", "1"]
-  du.update!({:row_count => rows.count})
   parse_process = ParseProcess.new(du)
   puts parse_process.inspect
 
-  rows.each do |row|
+  row_counter = 0
+  CSV.parse(response.body, du.csv_parse_options).each do |row|
     violation = Violation.where({
       :guid => row[6], # "123456789",
       :description => row[7], # "A FAKE VIOLATION"
@@ -55,10 +50,13 @@ data_urls.each do |du|
       :date => row[0], # "20-JAN-15",
       :time => row[4], # "03:00:00 PM"
     }).first_or_create!
+
+    row_counter+=1
   end
 
-  du.update!({:extracted => true})
+  du.update!({:extracted => true, :row_count => row_counter})
 
+  parse_process.row_count = row_counter
   parse_process.ended_at = Time.now
   puts parse_process.inspect
 end

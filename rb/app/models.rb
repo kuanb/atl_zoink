@@ -120,22 +120,23 @@ class ExtractionProcess < ObservedProcess
 end
 
 class ParseProcess < ObservedProcess
+  attr_accessor :row_count
+
   def initialize(data_url)
-    @row_count = data_url.row_count
+    @data_url = data_url
     @started_at = Time.now
     @ended_at = nil
   end
 
   def rows_per_second
-    @row_count / duration_seconds unless @ended_at.nil?
+    @row_count / duration_seconds
   end
 
   def inspect
-    case @ended_at
-    when nil
-      "Processing #{@row_count} rows ..."
+    if !@ended_at.nil? && !@row_count.nil?
+      "Parsed #{@row_count} rows in #{duration_seconds} seconds (#{rows_per_second} rps)."
     else
-      "Processed #{@row_count} rows in #{duration_seconds} seconds (#{rows_per_second} rps)"
+      "Parsing #{@data_url.url} ..."
     end
   end
 end
