@@ -1,0 +1,20 @@
+{
+  "name": "atl-data-explore",
+  "version": "0.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kuanb/atl_zoink"
+  },
+  "author": "Kuan Butts <kuan@gcodeforamerica.org>",
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^2.3.4",
+    "express": "~4.13.3",
+    "knex": "^0.9.0",
+    "sqlite3": "^3.1.1"
+  }
+}
