@@ -12,6 +12,9 @@ SELECT
     / count(DISTINCT id)
   ,4) AS file_parsing_progress
 
+  ,min(row_count) AS smallest_file_row_count
+  ,max(row_count) AS largest_file_row_count
+
   ,sum(row_count) AS row_count
   ,sum(CASE WHEN parsed = TRUE THEN row_count ELSE 0 END) AS parsed_row_count
 

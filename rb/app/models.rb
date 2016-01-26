@@ -89,6 +89,31 @@ class ObservedProcess
   def duration_seconds
     (@ended_at - @started_at) unless @ended_at.nil?
   end
+
+  def duration_minutes
+    duration_seconds / 60 unless duration_seconds.nil?
+  end
+end
+
+class ExtractionProcess < ObservedProcess
+  def initialize(data_urls)
+    @url_count = data_urls.count
+    @started_at = Time.now
+    @ended_at = nil
+  end
+
+  def urls_per_minute
+    @url_count / duration_minutes
+  end
+
+  def inspect
+    case @ended_at
+    when nil
+      "EXTRACTING #{@url_count} of #{AtlantaDataUrl.count} possible urls ..."
+    else
+      "EXTRACTED #{@url_count} in #{duration_minutes} (#{urls_per_minute} urlpm)."
+    end #todo: avoid reaching into AtlantaDataFile
+  end
 end
 
 class TransformLoadProcess < ObservedProcess
@@ -96,10 +121,6 @@ class TransformLoadProcess < ObservedProcess
     @file_count = data_files.count
     @started_at = Time.now
     @ended_at = nil
-  end
-
-  def duration_minutes
-    duration_seconds / 60 unless duration_seconds.nil?
   end
 
   def files_per_minute
@@ -111,7 +132,7 @@ class TransformLoadProcess < ObservedProcess
     when nil
       "Processing #{@file_count} of #{AtlantaDataFile.local_file_names.count} files ..."
     else
-      "Processed #{@file_count} of #{AtlantaDataFile.local_file_names.count} files in #{duration_minutes} minutes (#{files_per_minute} fpm)"
+      "Processed #{@file_count} of #{AtlantaDataFile.local_file_names.count} files in #{duration_minutes} minutes (#{files_per_minute} fpm)."
     end #todo: avoid reaching into AtlantaDataFile
   end
 end

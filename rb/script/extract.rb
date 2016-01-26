@@ -18,25 +18,24 @@ AtlantaDataUrl.possible_upload_dates.each do |d|
   AtlantaDataUrl.where(:upload_date => d).first_or_create!
 end
 
-puts "EXTRACTING #{AtlantaDataUrl.unextracted.count} OF #{AtlantaDataUrl.count} POSSIBLE URLS ..."
+#
+# Identify urls which have not yet been extracted.
+#
+
+data_urls = AtlantaDataUrl.unextracted
+
+process = ExtractionProcess.new(data_urls)
+puts process.inspect
 
 #
 # Extract .csv data.
 #
 
-AtlantaDataUrl.unextracted.each do |du|
+data_urls.each do |du|
   response = HTTParty.get(du.url)
 
   du.update!({:response_code => response.code, :string_encoding => response.body.encoding.to_s})
   puts du.inspect
-
-  ####
-  #### Handle encodings other than "UTF-8", most notably "ASCII-8BIT"
-  ####
-  ###encoded_body = response.body
-  ###if du.string_encoding != "UTF-8"
-  ###  encoded_body = response.body.encode("utf-8", "utf-8", {:invalid => :replace})
-  ###end
 
   csv_parse_options = {
     :col_sep => "|", # should parse pipe-delimited data
@@ -48,12 +47,12 @@ AtlantaDataUrl.unextracted.each do |du|
 
   CSV.open(du.local_csv_file_path, "w", :write_headers=> true, :headers => CSV_HEADERS) do |csv|
     rows.each do |row|
-      begin
-        csv << row.map{|cell| cell.encode!("UTF-8")} # transcode
-      rescue
-      end
+      csv << row.map{|cell| cell.encode!("UTF-8")} # transcode
     end
   end
 
   du.update!({:extracted => true})
 end
+
+process.ended_at = Time.now
+puts process.inspect
