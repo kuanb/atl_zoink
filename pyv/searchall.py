@@ -12,6 +12,7 @@ con = None
 
 # housekeeping to get the db set up and clean
 if os.environ.get("refresh") == "1":
+	print "Prepping/clearing existing db first..."
 	con = lite.connect("all.db")
 	try:
 		cur = con.cursor()
@@ -23,6 +24,7 @@ if os.environ.get("refresh") == "1":
 	finally:
 		if con:
 			con.close()
+		print "All good to go."
 		con = None
 
 
@@ -36,6 +38,9 @@ end_date = date(2016, 1, 1)
 def daterange(start_date, end_date):
 	for n in range(int ((end_date - start_date).days)):
 		yield start_date + timedelta(n)
+
+def removeNonAscii(s): 
+	return "".join(i for i in s if ord(i)<128)
 
 
 # open csvs then clean and prep to write to them as we get results
@@ -59,7 +64,14 @@ for single_date in daterange(start_date, end_date):
 			if len(r) is 9:
 				mod = []
 				for i in r:
-					mod.append(str(i))
+					try:
+						i = removeNonAscii(i)
+						mod.append(unicode(i, "utf-8"))
+					except:
+						print "What happened!?!"
+						print i
+						print "-----------"
+						print ""
 				lines.append(tuple(mod))
 			else:
 				print "Bad length on line in " + str(curr_date) + ". Row looks like: " + str(r)
@@ -71,8 +83,9 @@ for single_date in daterange(start_date, end_date):
 				cur = con.cursor()
 				try:
 					cur.executemany("INSERT INTO allatl VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", l)
-				except:
-					print "ERROR putting " + curr_date + " into local db"
+				except lite.ProgrammingError, e:
+					print "ERROR putting " + curr_date + " into local db."
+					print e
 			con = None
 
 		hasdata = open("hasdata.csv","a")
