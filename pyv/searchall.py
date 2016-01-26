@@ -28,7 +28,7 @@ if os.environ.get("refresh") == "1":
 
 # base information/parameters for running operation
 url_base = "http://courtview.atlantaga.gov/courtcalendars/court_online_calendar/codeamerica."
-start_date = date(2014, 1, 1)
+start_date = date(2015, 12, 2)
 end_date = date(2016, 1, 1)
 
 
@@ -57,7 +57,10 @@ for single_date in daterange(start_date, end_date):
 		lines = []
 		for r in reader:
 			if len(r) is 9:
-				lines.append(tuple(r))
+				mod = []
+				for i in r:
+					mod.append(str(i))
+				lines.append(tuple(mod))
 			else:
 				print "Bad length on line in " + str(curr_date) + ". Row looks like: " + str(r)
 
