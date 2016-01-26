@@ -3,6 +3,15 @@
 ```` sql
 -- what is the status of data transformation processes?
 SELECT
+  count(DISTINCT id) AS urls_possible
+  ,count(DISTINCT CASE WHEN response_code IS NULL THEN id END) AS urls_todo
+  ,count(DISTINCT CASE WHEN response_code = 404 THEN id END) AS urls_404
+  ,count(DISTINCT CASE WHEN response_code = 200 THEN id END) AS urls_200
+  ,count(DISTINCT CASE WHEN extracted = TRUE THEN id END) AS urls_extracted
+  ,sum(row_count) AS rows_extracted
+FROM data_urls;
+/*
+SELECT
   count(DISTINCT id) AS url_count
   ,count(DISTINCT CASE WHEN extracted = TRUE THEN id END) AS extracted_file_count
 
@@ -24,13 +33,8 @@ SELECT
     / sum(row_count)
   ,4) AS row_parsing_progress
 FROM data_urls;
+*/
 ````
-
-=>
-
-file_count | extracted_file_count | file_parsing_progress | row_count | extracted_row_count | row_parsing_progress
---- | --- | --- | --- | --- | ---
-193 | 54 | 0.2798 | 7083498 | 2217136 | 0.313
 
 ```` sql
 -- which violations have been cited the most?
