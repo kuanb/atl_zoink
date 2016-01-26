@@ -15,7 +15,14 @@ end
 # Extract, transform, and load .csv data.
 #
 
-data_urls = DataUrl.unextracted
+def ensure_encoding(str, encoding_class)
+  #str.try(:encode!, "UTF-8")
+  #str.try(:encode, "utf-8", "utf-8", {:invalid => :replace})
+  str.try(:force_encoding, encoding_class).try(:encode, "UTF-8")
+end
+
+data_urls = DataUrl.where(:upload_date => "2015-03-12".to_date)
+#data_urls = DataUrl.unextracted #.where(:upload_date => "2015-03-12".to_date)
 process = ExtractionProcess.new(data_urls)
 puts process.inspect
 
@@ -29,26 +36,28 @@ data_urls.each do |du|
   parse_process = ParseProcess.new(du)
   puts parse_process.inspect
 
+  binding.pry
+
   row_counter = 0
   CSV.parse(response.body, du.csv_parse_options).each do |row|
     violation = Violation.where({
-      :guid => row[6], # "123456789",
-      :description => row[7], # "A FAKE VIOLATION"
+      :guid => ensure_encoding(row[6], du.string_encoding), # "123456789",
+      :description => ensure_encoding(row[7], du.string_encoding), # "A FAKE VIOLATION"
     }).first_or_create!
 
     citation = Citation.where({
-      :guid => row[5], # "123456789",
+      :guid => ensure_encoding(row[5], du.string_encoding), # "123456789",
       :violation_id => violation.id,
-      :location => row[2], # "123 FAKE STREET",
-      :payable => row[8], # 1
+      :location => ensure_encoding(row[2], du.string_encoding), # "123 FAKE STREET",
+      :payable => ensure_encoding(row[8], du.string_encoding), # 1
     }).first_or_create!
 
     Appointment.where({
       :citation_id => citation.id,
-      :defendant_full_name => row[1], # "Fake Person",
-      :room => row[3], # "3B",
-      :date => row[0], # "20-JAN-15",
-      :time => row[4], # "03:00:00 PM"
+      :defendant_full_name => ensure_encoding(row[1], du.string_encoding), # "Fake Person",
+      :room => ensure_encoding(row[3], du.string_encoding), # "3B",
+      :date => ensure_encoding(row[0], du.string_encoding), # "20-JAN-15",
+      :time => ensure_encoding(row[4], du.string_encoding), # "03:00:00 PM"
     }).first_or_create!
 
     row_counter+=1
