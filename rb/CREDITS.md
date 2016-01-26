@@ -15,3 +15,8 @@
   + http://stackoverflow.com/a/12407859/670433
   + http://stackoverflow.com/questions/4662438/count-the-length-number-of-lines-of-a-csv-file
   + http://stackoverflow.com/questions/21288458/in-redshift-postgres-how-to-count-rows-that-meet-a-condition
+  + http://stackoverflow.com/questions/5053216/when-we-import-csv-data-how-eliminate-invalid-byte-sequence-in-utf-8
+  + http://stackoverflow.com/questions/7078974/how-to-change-the-encoding-during-csv-parsing-in-rails
+  + http://usefulstuff.io/2013/06/encoding-csv-and-ruby/
+  + http://ruby-doc.org/core-1.9.3/String.html#method-i-encode
+  + http://stackoverflow.com/questions/7047944/ruby-read-csv-file-as-utf-8-and-or-convert-ascii-8bit-encoding-to-utf-8

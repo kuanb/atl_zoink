@@ -25,6 +25,8 @@ class Violation < ActiveRecord::Base
 end
 
 class AtlantaDataFile < ActiveRecord::Base
+  #belongs_to :atlanta_data_url, :inverse_of => :atlanta_data_file
+
   DATA_DIR = File.join(File.expand_path(".."), "data")
 
   def self.local_file_names
@@ -41,6 +43,39 @@ class AtlantaDataFile < ActiveRecord::Base
 
   def file_path
     File.join(DATA_DIR, file_name)
+  end
+end
+
+class AtlantaDataUrl < ActiveRecord::Base
+  #has_one :atlanta_data_file, :inverse_of => :atlanta_data_url
+
+  # The range of possible days on which .csv files could be posted to the server.
+  def self.possible_upload_dates
+    ("2014-01-01".to_date .. Date.today)
+  end
+
+  def self.extracted
+    where(:extracted => true)
+  end
+
+  def self.unextracted
+    all - extracted
+  end
+
+  def url_date
+    upload_date.strftime("%d%m%Y") # "20012014"
+  end
+
+  def url
+    "http://courtview.atlantaga.gov/courtcalendars/court_online_calendar/codeamerica.#{url_date}.csv"
+  end
+
+  def local_file_name
+    "#{upload_date.strftime("%Y-%m-%d")}.csv"
+  end
+
+  def local_csv_file_path
+    File.join(File.expand_path(".."), "data", local_file_name)
   end
 end
 
