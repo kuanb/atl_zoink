@@ -111,8 +111,8 @@ class ExtractionProcess < ObservedProcess
     when nil
       "EXTRACTING #{@url_count} of #{AtlantaDataUrl.count} possible urls ..."
     else
-      "EXTRACTED #{@url_count} in #{duration_minutes} (#{urls_per_minute} urlpm)."
-    end #todo: avoid reaching into AtlantaDataFile
+      "EXTRACTED #{@url_count} urls in #{duration_minutes} minutes (#{urls_per_minute} urlpm)."
+    end #todo: avoid reaching into AtlantaDataUrl
   end
 end
 
