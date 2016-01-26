@@ -15,7 +15,7 @@ end
 # Extract, transform, and load .csv data.
 #
 
-data_urls = DataUrl.unextracted
+data_urls = DataUrl.found.unextracted
 process = ExtractionProcess.new(data_urls)
 puts process.inspect
 
