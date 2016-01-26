@@ -25,6 +25,7 @@ data_urls.each do |du|
   puts du.inspect
 
   next unless du.response_code == 200
+  next if du.string_encoding != "UTF-8" #todo: transcode instead of skipping these 11 files
 
   parse_process = ParseProcess.new(du)
   puts parse_process.inspect
