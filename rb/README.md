@@ -35,8 +35,7 @@ psql -U courtbot --password -d postgres -f $(pwd)/db/create.sql
 Migrate database.
 
 ```` sh
-ruby db/migrate/create_atlanta_data_urls.rb
-ruby db/migrate/create_atlanta_data_files.rb
+ruby db/migrate/create_data_urls.rb
 ruby db/migrate/create_appointments.rb
 ruby db/migrate/create_citations.rb
 ruby db/migrate/create_violations.rb
@@ -50,14 +49,14 @@ ruby db/seed.rb
 
 ## Usage
 
-Download all .csv files to local file system.
+Extract, transform, and load all .csv data into a database.
 
 ```` sh
-ruby script/extract.rb
+ruby script/extract_transform_and_load.rb
 ````
 
-Store .csv data in a database.
+Backup database.
 
 ```` sh
-ruby script/transform_and_load.rb
+pg_dump courtbot_atl > ~/Desktop/courtbot_atl_development.sql
 ````
